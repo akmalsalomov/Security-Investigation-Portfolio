@@ -94,3 +94,25 @@ I configured Azure Bastion to access the Windows and Linux virtual machines whil
 
 ### Why It Matters
 Exposing management services such as RDP or SSH directly to the internet increases the attack surface by allowing external systems to reach those services. Using Bastion allowed me to administer the virtual machines through their private network connectivity without making those management ports directly internet-facing.
+
+## 8. Windows and Linux Virtual Machines
+
+### Purpose
+The virtual machines provide the operating systems where user activity, authentication events, system activity, and other security telemetry are generated.
+
+### What I Configured
+I deployed both Windows and Linux virtual machines inside the lab network and accessed them through Azure Bastion instead of exposing RDP or SSH directly to the public internet.
+
+### Why I Used Both Windows and Linux
+
+I intentionally deployed both Windows and Linux because enterprise environments often contain multiple operating systems, and each produces different types of security telemetry.
+
+Windows generates events such as Windows Security Events, while Linux commonly generates Syslog. Working with both systems allowed me to understand how different operating systems generate evidence and how their log ingestion paths differ before the data reaches the monitoring platform.
+
+## Environment Foundation Complete
+
+At this stage, the lab had an identity boundary, Azure resource scope, organized resources, private networking, network security controls, secure administrative access, and both Windows and Linux systems.
+
+However, the environment still had one major limitation from a security operations perspective:
+
+**The systems were generating activity, but I did not yet have centralized visibility into that activity.**
