@@ -50,6 +50,9 @@ A Resource Group is a logical container used to organize and manage related Azur
 
 ### What I Configured
 I created dedicated Resource Groups to logically organize the Azure resources used in my security lab. This allowed related resources to be grouped together and made the environment easier to manage, monitor, and remove when no longer needed.
+### Evidence
+
+![Azure Resource Group containing the security lab resources](screenshots/resource-group-overview.png)
 
 ## 4. Virtual Network
 
@@ -72,6 +75,9 @@ I divided the VNet into subnets to separate different parts of the lab environme
 
 ### Why It Matters
 Subnets make it easier to apply different network security rules, manage traffic between workloads, and reduce the potential blast radius if one part of the environment is compromised.
+### Evidence
+
+![Azure VNet and subnet configuration](screenshots/vnet-subnets.png)
 
 ## 6. Network Security Groups (NSGs)
 
@@ -83,6 +89,12 @@ I configured NSG rules to control which traffic could reach resources in the lab
 
 ### Why It Matters
 A resource being connected to a network does not mean every connection should be allowed. NSGs provide network-level access control that helps reduce unnecessary exposure and limits which traffic can reach protected resources.
+**Windows VM NSG rules**
+
+![Windows VM Network Security Group rules](screenshots/windows-nsg-rules.png)
+**Linux VM NSG rules**
+
+![Linux VM Network Security Group rules](screenshots/linux-nsg-rules.png)
 
 ## 7. Azure Bastion
 
@@ -108,6 +120,9 @@ I deployed both Windows and Linux virtual machines inside the lab network and ac
 I intentionally deployed both Windows and Linux because enterprise environments often contain multiple operating systems, and each produces different types of security telemetry.
 
 Windows generates events such as Windows Security Events, while Linux commonly generates Syslog. Working with both systems allowed me to understand how different operating systems generate evidence and how their log ingestion paths differ before the data reaches the monitoring platform.
+### Evidence
+
+![Windows and Linux virtual machines deployed in the lab](screenshots/windows-linux-vms.png)
 
 ## Environment Foundation Complete
 
