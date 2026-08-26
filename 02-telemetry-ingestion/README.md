@@ -234,3 +234,27 @@ Sentinel uses the collected telemetry to support analytics rules, detections, al
 ### Evidence
 
 ![Microsoft Sentinel workspace connected to the Defender portal](screenshots/sentinel-defender-workspace-connected.png)
+
+## Windows Security Events Collection
+
+Windows telemetry is not a single data stream.
+
+The `Event` table was receiving Windows Application and System logs because those channels had been explicitly configured as data sources in the general DCR.
+
+Windows Security Events are a separate telemetry stream. They contain auditable security activity and require their own collection configuration.
+
+Until I configured Windows Security Events via AMA with a dedicated DCR, the `SecurityEvent` table remained empty.
+
+After the rule was created and associated with `soc-win-01`, Windows Security telemetry began streaming into `SecurityEvent`.
+
+### Troubleshooting Lesson
+
+A healthy `Heartbeat` and populated `Event` table did not mean every Windows telemetry stream was configured.
+
+The missing `SecurityEvent` data was not caused by a broken agent or workspace connection. The security-specific collection rule had simply not been created yet.
+
+This reinforced the importance of validating each telemetry path independently.
+
+### Evidence
+
+![Windows SecurityEvent ingestion validated after configuring the dedicated security DCR](screenshots/windows-securityevent-dcr-validation.png)
