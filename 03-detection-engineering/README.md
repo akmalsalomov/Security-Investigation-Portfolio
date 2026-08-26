@@ -140,3 +140,6 @@ These fields can later be mapped to Sentinel entities:
 The detection result preserves the targeted account, destination host, source IP address, time window, and failed-attempt count.
 
 ![Failed Windows logon detection preserving account, host, and source IP context](screenshots/windows-failed-logon-entity-context.png)
+### Validation Note
+
+The threshold is `>= 5`, not `== 5`. This run produced 8 failed attempts within the five-minute window, which still correctly triggered the detection and demonstrates that the logic generalizes beyond the exact test case used during initial validation.
