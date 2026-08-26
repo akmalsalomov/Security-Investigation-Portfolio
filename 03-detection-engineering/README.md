@@ -143,3 +143,121 @@ The detection result preserves the targeted account, destination host, source IP
 ### Validation Note
 
 The threshold is `>= 5`, not `== 5`. This run produced 8 failed attempts within the five-minute window, which still correctly triggered the detection and demonstrates that the logic generalizes beyond the exact test case used during initial validation.
+
+## Detection Pipeline — From Telemetry to Incident
+
+```
+                    RAW SECURITY TELEMETRY
+                              │
+              ┌───────────────┴───────────────┐
+              ▼                               ▼
+           WINDOWS                          LINUX
+        SecurityEvent                       Syslog
+              │                               │
+       Event ID 4625                  SSH authentication
+              │                        message evidence
+              ▼                               ▼
+     Controlled failed RDP            Controlled failed SSH
+        logons generated                logons generated
+              │                               │
+              ▼                               ▼
+     KQL isolated failures             KQL isolated failures
+              │                               │
+              └───────────────┬───────────────┘
+                              ▼
+                  INDIVIDUAL EVENTS ARE
+                    NOT YET A DETECTION
+                              │
+                              ▼
+                    DEFINE THE PATTERN
+                              │
+                     Same Account
+                          +
+                     Short Time
+                          +
+                    Multiple Failures
+                              │
+                              ▼
+                       KQL DETECTION
+                              │
+                 SecurityEvent / 4625
+                              │
+                    Group by Account
+                              │
+                  bin(TimeGenerated, 5m)
+                              │
+                   Count failed attempts
+                              │
+                    FailedAttempts >= 5
+                              │
+                              ▼
+                    THRESHOLD VALIDATED
+                              │
+                  5+ failures surfaced
+                              │
+                              ▼
+                 PRESERVE INVESTIGATION
+                         CONTEXT
+                              │
+              ┌───────────────┼───────────────┐
+              ▼               ▼               ▼
+           Account         Computer        IpAddress
+              │               │               │
+             WHO?           WHERE?        FROM WHERE?
+              │               │               │
+              ▼               ▼               ▼
+           Account           Host              IP
+            Entity          Entity           Entity
+              └───────────────┬───────────────┘
+                              ▼
+                       ENTITY MAPPING
+
+              "These aren't just strings —
+               these are security objects."
+                              │
+                              ▼
+                    ANALYTICS RULE DESIGN
+                              │
+          ┌───────────────────┼───────────────────┐
+          ▼                   ▼                   ▼
+      Severity             MITRE              Schedule
+       Medium          Credential Access     Every 5 min
+                         Brute Force          Look back 5m
+                           (T1110)
+                              │
+                              ▼
+                       TWO DIFFERENT
+                         THRESHOLDS
+                              │
+              ┌───────────────┴───────────────┐
+              ▼                               ▼
+        KQL THRESHOLD                  RULE TRIGGER
+    FailedAttempts >= 5              Query results > 0
+              │                               │
+              ▼                               ▼
+   "What looks suspicious?"          "Did KQL find any?"
+              └───────────────┬───────────────┘
+                              ▼
+                         RULE FIRES
+                              │
+                              ▼
+                            ALERT
+                              │
+                 Account / Host / IP
+                              │
+                              ▼
+                       ALERT GROUPING
+                              │
+              Are repeated alerts related?
+                          Shared entities
+                              │
+                              ▼
+                           INCIDENT
+                    Container for investigation
+```
+
+**Note:** Rule creation for this environment was completed through the
+Microsoft Defender portal's Sentinel analytics editor, since standalone
+Azure Sentinel rule creation has been migrated there. The classic Azure
+portal Sentinel blade was used earlier in this section for query
+development and validation.
