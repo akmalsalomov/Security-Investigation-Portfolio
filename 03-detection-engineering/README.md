@@ -113,3 +113,30 @@ SecurityEvent
 The query successfully identified five failed Windows logons against the same account within a five-minute window.
 
 ![Threshold-based detection of five failed Windows logons within five minutes](screenshots/windows-failed-logon-threshold-detection.png)
+
+## From Detection Logic to an Analytics Rule
+
+The KQL query defines what behavior should be considered suspicious:
+
+SecurityEvent
+| where EventID == 4625
+| summarize FailedAttempts = count()
+    by Account, Computer, IpAddress, bin(TimeGenerated, 5m)
+| where FailedAttempts >= 5
+
+### Preserving Investigation Context
+
+The detection query preserves the account, host, and source IP associated with the failed authentication pattern.
+
+This allows the resulting detection to identify not only that the threshold was exceeded, but also who was targeted, which system received the attempts, and where the activity originated.
+
+These fields can later be mapped to Sentinel entities:
+
+- `Account` → Account
+- `Computer` → Host
+- `IpAddress` → IP
+  ### Evidence
+
+The detection result preserves the targeted account, destination host, source IP address, time window, and failed-attempt count.
+
+![Failed Windows logon detection preserving account, host, and source IP context](screenshots/windows-failed-logon-entity-context.png)
