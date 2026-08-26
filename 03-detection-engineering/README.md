@@ -107,10 +107,9 @@ SecurityEvent
 | summarize FailedAttempts = count()
     by Account, bin(TimeGenerated, 5m)
 | where FailedAttempts >= 5
+```
 
 ### Evidence
-
 The query successfully identified five failed Windows logons against the same account within a five-minute window.
 
 ![Threshold-based detection of five failed Windows logons within five minutes](screenshots/windows-failed-logon-threshold-detection.png)
-
