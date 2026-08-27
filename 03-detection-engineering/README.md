@@ -142,11 +142,87 @@ The detection result preserves the targeted account, destination host, source IP
 ![Failed Windows logon detection preserving account, host, and source IP context](screenshots/windows-failed-logon-entity-context.png)
 ### Validation Note
 
-The threshold is `>= 5`, not `== 5`. This run produced 8 failed attempts within the five-minute window, which still correctly triggered the detection and demonstrates that the logic generalizes beyond the exact test case used during initial validation.
+## Operationalizing the Detection with a Sentinel Analytics Rule
+
+After validating the KQL detection logic, I converted the query into a scheduled Microsoft Sentinel analytics rule.
+
+The Microsoft Defender Sentinel analytics editor was failing with React error `#185`, so I created the rule directly against the Microsoft Sentinel REST API through Azure Cloud Shell.
+
+This allowed the detection pipeline to continue without changing the detection logic or the Sentinel architecture.
+
+### Rule Configuration
+
+The scheduled rule was configured with:
+
+- **Severity:** Medium
+- **MITRE ATT&CK tactic:** Credential Access
+- **Technique:** Brute Force (`T1110`)
+- **Query frequency:** Every 5 minutes
+- **Query lookback:** Last 5 minutes
+- **KQL threshold:** `FailedAttempts >= 5`
+- **Rule trigger:** Query results `> 0`
+- **Incident creation:** Enabled
+- **Alert grouping:** Enabled
+
+The KQL threshold determines what behavior is suspicious.
+
+The analytics rule trigger determines whether the query found any suspicious results.
+
+### Entity Mapping
+
+The rule preserved and mapped the investigation context returned by the query:
+
+- `Account` → Account entity
+- `Computer` → Host entity
+- `IpAddress` → IP entity
+
+This allows Sentinel to treat these values as security objects rather than simple strings and carry them forward into the alert and incident.
+
+### Evidence
+
+The rule was successfully created through the Sentinel REST API and appeared as an enabled scheduled analytics rule in Microsoft Defender.
+
+![Active Microsoft Sentinel scheduled analytics rule showing severity, MITRE mapping, KQL, and five-minute schedule](screenshots/sentinel-analytics-rule-active.png)
+## Controlled Detection Validation
+
+To validate the complete detection pipeline, I generated multiple failed RDP authentication attempts against the Windows VM using the same account within a five-minute period.
+
+Windows recorded the activity as Security Event ID `4625`, and the events were ingested into the Log Analytics workspace through the existing telemetry pipeline.
+
+I then ran the same KQL logic used by the scheduled analytics rule:
+
+```kusto
+SecurityEvent
+| where EventID == 4625
+| summarize FailedAttempts = count()
+    by Account, Computer, IpAddress, bin(TimeGenerated, 5m)
+| where FailedAttempts >= 5
 
 ## Detection Pipeline — From Telemetry to Incident
 
 ```
+![KQL validation showing eight failed Windows logon attempts crossing the detection threshold](windows-failed-logon-entity-context.png)
+The threshold is `>= 5`, not `== 5`. This run produced 8 failed attempts within the five-minute window, which still correctly triggered the detection and demonstrates that the logic generalizes beyond the exact test case used during initial validation.
+
+## Analytics Rule Alert Generated
+
+After the controlled failed-logon activity crossed the KQL threshold, the scheduled Microsoft Sentinel analytics rule executed and generated a security alert.
+
+The alert preserved the investigation context returned by the query:
+
+- **Account:** `\azureuser`
+- **Host:** `soc-win-01`
+- **Source IP:** `63.209.70.146`
+- **Failed attempts:** `5`
+- **Severity:** Medium
+- **Category:** Credential Access
+
+This confirmed that the detection logic had moved beyond manual query validation and was operating automatically as a Sentinel security detection.
+
+### Evidence
+
+![Microsoft Sentinel alert generated from the repeated failed Windows logon analytics rule](screenshots/sentinel-alert-brute-force-detection.png)
+
                     RAW SECURITY TELEMETRY
                               │
               ┌───────────────┴───────────────┐
