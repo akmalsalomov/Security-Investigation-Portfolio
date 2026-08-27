@@ -351,3 +351,15 @@ Microsoft Defender portal's Sentinel analytics editor, since standalone
 Azure Sentinel rule creation has been migrated there. The classic Azure
 portal Sentinel blade was used earlier in this section for query
 development and validation.
+
+## Detection Engineering Outcome
+
+This exercise moved beyond querying individual security events and implemented a complete detection workflow.
+
+Raw Windows authentication telemetry was transformed into a behavioral pattern using KQL, evaluated on a five-minute schedule, enriched through Account, Host, and IP entity mappings, and operationalized through a Microsoft Sentinel scheduled analytics rule.
+
+Controlled failed-logon activity validated the complete path:
+
+**SecurityEvent telemetry → KQL pattern → threshold → analytics rule → alert → mapped entities → incident**
+
+The resulting incident preserved the account, destination host, and source IP required for investigation, demonstrating how raw telemetry becomes actionable security context.
