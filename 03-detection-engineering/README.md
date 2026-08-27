@@ -221,6 +221,22 @@ This confirmed that the detection logic had moved beyond manual query validation
 ### Evidence
 ![Microsoft Sentinel alert generated from the repeated failed Windows logon analytics rule](screenshots/sentinel-alert-brute-force-detection.png)
 
+## Incident Creation and Entity Mapping
+
+The analytics rule was configured to create a Microsoft Sentinel incident when the detection threshold was met.
+
+After the alert fired, Sentinel created an incident and used the configured entity mappings to associate the account, destination host, and source IP address with the detection.
+
+This transformed the raw KQL result into structured investigation context that an analyst can use to understand which identity was targeted, which system received the authentication attempts, and where the activity originated.
+
+### Investigation Entities
+
+- **Account:** `\azureuser`
+- **Host:** `soc-win-01`
+- **Source IP:** `63.209.70.146`
+
+![Microsoft Sentinel incident graph showing mapped Account, Host, and IP entities](screenshots/sentinel-incident-entity-graph.png)
+
                     RAW SECURITY TELEMETRY
                               │
               ┌───────────────┴───────────────┐
