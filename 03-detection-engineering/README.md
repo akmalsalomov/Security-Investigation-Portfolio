@@ -221,7 +221,7 @@ This confirmed that the detection logic had moved beyond manual query validation
 
 ### Evidence
 
-![Microsoft Sentinel alert generated from the repeated failed Windows logon analytics rule](screenshots/sentinel-alert-brute-force-detection.png)
+![Microsoft Sentinel alert generated from the repeated failed Windows logon analytics rule](sentinel-alert-brute-force-detection.png)
 
                     RAW SECURITY TELEMETRY
                               │
