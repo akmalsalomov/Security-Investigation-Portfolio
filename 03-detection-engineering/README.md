@@ -141,6 +141,7 @@ The detection result preserves the targeted account, destination host, source IP
 
 ![Failed Windows logon detection preserving account, host, and source IP context](screenshots/windows-failed-logon-entity-context.png)
 ### Validation Note
+The threshold is `>= 5`, not `== 5`. This run produced 8 failed attempts within the five-minute window, which still correctly triggered the detection and demonstrates that the logic generalizes beyond the exact test case used during initial validation.
 
 ## Operationalizing the Detection with a Sentinel Analytics Rule
 
@@ -202,7 +203,6 @@ SecurityEvent
 
 ```
 ![KQL validation showing eight failed Windows logon attempts crossing the detection threshold](windows-failed-logon-entity-context.png)
-The threshold is `>= 5`, not `== 5`. This run produced 8 failed attempts within the five-minute window, which still correctly triggered the detection and demonstrates that the logic generalizes beyond the exact test case used during initial validation.
 
 ## Analytics Rule Alert Generated
 
@@ -220,8 +220,7 @@ The alert preserved the investigation context returned by the query:
 This confirmed that the detection logic had moved beyond manual query validation and was operating automatically as a Sentinel security detection.
 
 ### Evidence
-
-![Microsoft Sentinel alert generated from the repeated failed Windows logon analytics rule](sentinel-alert-brute-force-detection.png)
+![Microsoft Sentinel alert generated from the repeated failed Windows logon analytics rule](screenshots/sentinel-alert-brute-force-detection.png)
 
                     RAW SECURITY TELEMETRY
                               │
