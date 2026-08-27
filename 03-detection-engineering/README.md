@@ -201,7 +201,7 @@ SecurityEvent
 
 
 ```
-![Five failed Windows logon attempts meeting the detection threshold](screenshots/failed-logon-4625-validation.png)
+![Threshold-based detection of repeated failed Windows logons](screenshots/windows-failed-logon-threshold-detection.png)
 
 ## Analytics Rule Alert Generated
 
