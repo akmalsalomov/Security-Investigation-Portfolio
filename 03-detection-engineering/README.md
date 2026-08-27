@@ -202,7 +202,7 @@ SecurityEvent
 ## Detection Pipeline — From Telemetry to Incident
 
 ```
-![KQL validation showing eight failed Windows logon attempts crossing the detection threshold](windows-failed-logon-entity-context.png)
+![Five failed Windows logon attempts meeting the detection threshold](failed-logon-4625-validation.png)
 
 ## Analytics Rule Alert Generated
 
