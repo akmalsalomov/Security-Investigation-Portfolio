@@ -199,10 +199,9 @@ SecurityEvent
     by Account, Computer, IpAddress, bin(TimeGenerated, 5m)
 | where FailedAttempts >= 5
 
-## Detection Pipeline — From Telemetry to Incident
 
 ```
-![Five failed Windows logon attempts meeting the detection threshold](failed-logon-4625-validation.png)
+![Five failed Windows logon attempts meeting the detection threshold](screenshots/failed-logon-4625-validation.png)
 
 ## Analytics Rule Alert Generated
 
